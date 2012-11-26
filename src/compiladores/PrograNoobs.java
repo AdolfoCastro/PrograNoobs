@@ -181,9 +181,9 @@ public class PrograNoobs implements ActionListener, MouseListener, MouseMotionLi
     			parameterVariablesFixed.setEditable(true);
     			JButton button;
     			if (functionName.getText().trim().equals(""))
-    				button = new JButton(combo.getSelectedItem().toString() + " " + "Funcion"+numberOfFunctions );
+    				button = new JButton("Funcion"+numberOfFunctions + " " + combo.getSelectedItem().toString());
     			else
-    				button = new JButton(combo.getSelectedItem().toString() + " " + functionName.getText().trim() );
+    				button = new JButton(functionName.getText().trim());
     			button.addActionListener(this);
 				jplFunctionPane.remove(addFunctionButton);
 				jplFunctionPane.add(button);
