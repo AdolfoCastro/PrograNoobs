@@ -2,15 +2,13 @@ program Programa {
 
 
 	function Main(){
-		int a;
-		int b;
-		a=0;
-		b=0;
-		while (a<10
-) {
-			a=(a+1);
-			print (a);
-		}
+	
+	}
+	function int Uno(){
+
+	}
+	function int Dos(){
+
 	}
 
 }

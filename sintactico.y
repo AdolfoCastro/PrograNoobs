@@ -55,6 +55,9 @@ void tresEstWhile();
 //Escritura
 
 //
+//llamadas
+void unollamada(char *nombre);
+//
 void tablaDeProcedimientosGlobal();
 void tablaDeProcedimientosMain();
 void tablaDeProcedimientosFunciones(char *nombre,int cuadruploDeEntrada);
@@ -165,10 +168,7 @@ programa:PROG ID LLAVEA {gltc=1;}{insertPro(&startProList,"Global",5,1);}a
   cuentaStr=0;
   globalesBool=cuentaBool;
   cuentaBool =0;
-}
- {gltc=2;} main
-
-b LLAVEC {printf("Programa hecho \n");};
+}{gltc=2;} main b LLAVEC {printf("Programa hecho \n");};
 a:vars a;
 a:vacio;
 b:funcion b;
@@ -302,7 +302,7 @@ p:easignacion exp{if (esComparacion==1){
 p:vacio;
 
 /**********llamada*************/
-llamada:ID PARA q PARC PTCM;
+llamada:ID{unollamada($1);} PARA q PARC PTCM;
 q:exp r;
 q:vacio;
 r:COMA q;
@@ -930,6 +930,7 @@ void tablaDeProcedimientosMain(){
       restaStr=contStrTmp-12000;
       restaBool=contBoolTmp-13000;
       fclose(archivo);
+    insertCuadruplos(&startCuadruplos,100,0,0,0);
 }
 void tablaDeProcedimientosFunciones(char *nombre, int cuadruploDeEntrada){
   mainInt=cuentaInt;
@@ -949,7 +950,14 @@ void tablaDeProcedimientosFunciones(char *nombre, int cuadruploDeEntrada){
       restaStr=contStrTmp-12000;
       restaBool=contBoolTmp-13000;
       fclose(archivo);
+      insertCuadruplos(&startCuadruplos,51,0,0,0);
 
+}
+void unollamada(char *nombre){
+  TproNodoPtr newProPtr;
+  TproNodoPtr previousProPtr;
+  previousProPtr = NULL;
+  existPro ( startProList, previousProPtr, nombre);
 }
 
 char* itoa(int val, int base){
@@ -1004,7 +1012,7 @@ int main(int argc,char **argv){
       //fprintf(archivo, "%d-%d-%d-%d\n",globalesInt,globalesFloat,globalesStr,globalesBool);
       //fprintf(archivo,"Main-0-%d-%d-%d-%d-%d-%d-%d-%d",mainInt,mainFloat,mainStr,mainBool,contEntTmp-10000,contFlotTmp-11000,contStrTmp-12000,contBoolTmp-13000);
       //fclose(archivo);
-
+/*
   //impreciones de prueba
   printf("PilaO \n");
   printStack( PilaO );
@@ -1017,6 +1025,8 @@ int main(int argc,char **argv){
   printTables( startProList );
   printCuadruplos ( startCuadruplos );
   printTabCons( startTabCons);
+  */
+  printf("0" );
   return 0;
   
 }
