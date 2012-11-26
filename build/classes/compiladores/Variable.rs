@@ -1,0 +1,5 @@
+compiladores.VariableFloat
+compiladores.VariableStr
+compiladores.VariableInt
+compiladores.VariableBool
+compiladores.Variable
