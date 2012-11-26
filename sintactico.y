@@ -1005,8 +1005,9 @@ int main(int argc,char **argv){
       //fprintf(archivo,"Main-0-%d-%d-%d-%d-%d-%d-%d-%d",mainInt,mainFloat,mainStr,mainBool,contEntTmp-10000,contFlotTmp-11000,contStrTmp-12000,contBoolTmp-13000);
       //fclose(archivo);
 
+  
   //impreciones de prueba
-  printf("PilaO \n");
+  /*printf("PilaO \n");
   printStack( PilaO );
   printf("POper \n");
   printStack( POper );
@@ -1017,6 +1018,8 @@ int main(int argc,char **argv){
   printTables( startProList );
   printCuadruplos ( startCuadruplos );
   printTabCons( startTabCons);
+  */
+  printf("0");
   return 0;
   
 }
