@@ -5,12 +5,12 @@ program Programa {
 		int a;
 		int b;
 		a=0;
-		b=1;
-		while (a<10) {
+		b=0;
+		while (a<10
+) {
 			a=(a+1);
-			print(a);
+			print (a);
 		}
-		print (a);
 	}
 
 }

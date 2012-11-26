@@ -67,7 +67,7 @@ void printCuadruplos( CuadruplosPtr currentPtr ){
 }
 void escribeCuadruplos(CuadruplosPtr currentPtr){
    FILE *archivo;/*El manejador de archivo*/
-     archivo=fopen("codigointermedio.txt", "w");
+     archivo=fopen("codigointermedio.txt", "a");
      if(archivo==NULL)/*So no lo logramos abrir, salimos*/
          exit(EXIT_FAILURE);
    if ( isEmtpyCuadruplos(currentPtr) ) {

@@ -55,6 +55,9 @@ void tresEstWhile();
 //Escritura
 
 //
+void tablaDeProcedimientosGlobal();
+void tablaDeProcedimientosMain();
+void tablaDeProcedimientosFunciones(char *nombre,int cuadruploDeEntrada);
 char* itoa(int val, int base);
 void EscrituraWrite(char *nombre);
 //globales
@@ -79,10 +82,16 @@ int mainInt=0;
 int mainFloat=0;
 int mainStr=0;
 int mainBool=0;
+int restaEnt;
+int restaFlo;
+int restaStr;
+int restaBool;
 char *nombreDeVariable;
+int cuadruploDeEntrada;
 
 int esComparacion;
 int tipoComp;
+
 //apuntadores estructuras
 StackNodePtr apuntadorApOper;
 TproNodoPtr startProList = NULL;
@@ -158,16 +167,7 @@ programa:PROG ID LLAVEA {gltc=1;}{insertPro(&startProList,"Global",5,1);}a
   cuentaBool =0;
 }
  {gltc=2;} main
- {
-    mainInt=cuentaInt;
-    cuentaInt=0;
-    mainFloat=cuentaFloat;
-    cuentaFloat=0;
-    mainStr=cuentaStr;
-    cuentaStr=0;
-    mainBool=cuentaBool;
-    cuentaBool =0;
- }
+
 b LLAVEC {printf("Programa hecho \n");};
 a:vars a;
 a:vacio;
@@ -254,10 +254,10 @@ estatuto:asignacion;
 estatuto:llamada;
 estatuto:vars;
 /**********main****************/
-main: FUNC MAIN {insertPro(&startProList,"main",estipo,1);}PARA h PARC LLAVEA i LLAVEC {/*printf("funcion \n");*/};
+main: FUNC MAIN{tablaDeProcedimientosGlobal();} {insertPro(&startProList,"main",estipo,1);}PARA h PARC LLAVEA i LLAVEC{tablaDeProcedimientosMain();} {/*printf("funcion \n");*/};
 
 /**********funcion*************/
-funcion: FUNC tipo ID {insertPro(&startProList,$3,estipo,1);}PARA h PARC LLAVEA i LLAVEC {/*printf("funcion \n");*/};
+funcion: FUNC tipo ID {cuadruploDeEntrada=contSaltos;}{insertPro(&startProList,$3,estipo,1);}PARA h PARC LLAVEA i LLAVEC {tablaDeProcedimientosFunciones($3,cuadruploDeEntrada);}{/*printf("funcion \n");*/};
 h:tipo ID j;
 h:;
 i:bloque;
@@ -265,7 +265,7 @@ i:;
 j:COMA h;
 
 /**********asignacion*************/
-asignacion:NVAR{existeVarAsignar(startProList->headTvarPtr,startProList->headTvarPtr->nextPtr,$1);} {nombreDeVariable=$1;} IGUAL{ochoExp(8);} m PTCM;
+asignacion:NVAR{existeVarAsignar(startProList->headTvarPtr,startProList->headTvarPtr->nextPtr,$1,startProList);} {nombreDeVariable=$1;} IGUAL{ochoExp(8);} m PTCM;
 //m:clist;
 m:expresion{nueveExp(nombreDeVariable);};
 m:NVAR;
@@ -327,8 +327,7 @@ v:vacio;
 F:w;
 w:PARA{seisExp();} exp PARC{sieteExp();};
 w:{eragltc=gltc; gltc=4;} z {gltc=eragltc;};
-z:NVAR{
-  diezExp($1);
+z:NVAR{diezExp($1);
 
 };
 z:CINT{unoExpIntCons($1);};
@@ -750,9 +749,11 @@ void diezExp(char *nombre){
   //revisa que los nombres de las variables y funciones no existan 
     TvarNodoPtr existePtr;
     existePtr = startProList->headTvarPtr;
+
+    TproNodoPtr variablesGlobales;
+    variablesGlobales=startProList;
     int esta = 0;
     int i;
-
     while ( existePtr != NULL ) {
       i = strcmp (nombre, existePtr->nombreVariable);
        //printf("%s-%s",nombre,existePtr->nombreVariable);
@@ -761,7 +762,8 @@ void diezExp(char *nombre){
          esta = 1;
       }
       existePtr = existePtr->nextPtr;   
-      } // end while
+    } // end while
+    
     if(esta != 1){
       printf("la variable '%s' no existe  %s\n",nombre,existePtr->nombreVariable);
       exit(EXIT_FAILURE);
@@ -790,7 +792,28 @@ int direccionVariable(char *nombre){
       existePtr = existePtr->nextPtr;
     } // end while
     
+    if (existe==0){
+      while ( variablesGlobales != NULL) {
+        i = strcmp ("Global", variablesGlobales->nombreFuncion);
+        //printf("%s-%s\n",nombre,existePtr->nombreVariable);
+        existePtr=variablesGlobales->headTvarPtr;
+        if (i == 0){
+         while ( existePtr != NULL) {
+          i = strcmp (nombre, existePtr->nombreVariable);
+          //printf("%s-%s\n",nombre,existePtr->nombreVariable);
+          if (i == 0){
+            direccion = existePtr->direccion;
+            break;
+        //printf ("%d\n",direccion);
+          }
+          existePtr = existePtr->nextPtr;
+          } // end while
 
+        }
+        existePtr = existePtr->nextPtr;
+      } // end while
+
+    }
     return direccion;
 
 }
@@ -826,7 +849,7 @@ void dosEstIf(){
   for (int i=0;i<diferenciaCuadruplos-1;i++){
     memoriaCuadruplo=memoriaCuadruplo->nextPtr;
   }
-  memoriaCuadruplo->dirResultado = contSaltos-1;
+  memoriaCuadruplo->dirResultado = contSaltos;
   pop(&Saltos);// sacar falso de PSaltos
   push (&Saltos,contSaltos-1);
 }
@@ -839,7 +862,7 @@ void tresEstIf(){
   for (int i=0;i<diferenciaCuadruplos-1;i++){
     memoriaCuadruplo=memoriaCuadruplo->nextPtr;
   }
-  memoriaCuadruplo->dirResultado = contSaltos-1;
+  memoriaCuadruplo->dirResultado = contSaltos;
   pop(&Saltos); 
 }
 
@@ -872,9 +895,58 @@ void tresEstWhile(){
   for (int i=0;i<diferenciaCuadruplos-1;i++){
     memoriaCuadruplo=memoriaCuadruplo->nextPtr;
   }
-  memoriaCuadruplo->dirResultado = contSaltos-1;
+  memoriaCuadruplo->dirResultado = contSaltos;
   pop(&Saltos);
 
+
+}
+void tablaDeProcedimientosGlobal(){
+
+  FILE *archivo;/*El manejador de archivo*/
+      archivo=fopen("codigointermedio.txt", "w");
+      if(archivo==NULL)/*So no lo logramos abrir, salimos*/
+         exit(EXIT_FAILURE);
+        fprintf(archivo, "%d-%d-%d-%d\n",globalesInt,globalesFloat,globalesStr,globalesBool);
+      fclose(archivo);
+}
+void tablaDeProcedimientosMain(){
+    mainInt=cuentaInt;
+    cuentaInt=0;
+    mainFloat=cuentaFloat;
+    cuentaFloat=0;
+    mainStr=cuentaStr;
+    cuentaStr=0;
+    mainBool=cuentaBool;
+    cuentaBool =0;
+   FILE *archivo;/*El manejador de archivo*/
+      archivo=fopen("codigointermedio.txt", "a");
+      if(archivo==NULL)/*So no lo logramos abrir, salimos*/
+         exit(EXIT_FAILURE);
+      fprintf(archivo,"Main-0-%d-%d-%d-%d-%d-%d-%d-%d\n",mainInt,mainFloat,mainStr,mainBool,contEntTmp-10000,contFlotTmp-11000,contStrTmp-12000,contBoolTmp-13000);
+      restaEnt=contEntTmp-10000;
+      restaFlo=contFlotTmp-11000;
+      restaStr=contStrTmp-12000;
+      restaBool=contBoolTmp-13000;
+      fclose(archivo);
+}
+void tablaDeProcedimientosFunciones(char *nombre, int cuadruploDeEntrada){
+  mainInt=cuentaInt;
+    cuentaInt=0;
+    mainFloat=cuentaFloat;
+    cuentaFloat=0;
+    mainStr=cuentaStr;
+    cuentaStr=0;
+    mainBool=cuentaBool;
+    FILE *archivo;/*El manejador de archivo*/
+      archivo=fopen("codigointermedio.txt", "a");
+      if(archivo==NULL)/*So no lo logramos abrir, salimos*/
+         exit(EXIT_FAILURE);
+      fprintf(archivo,"%s-%d-%d-%d-%d-%d-%d-%d-%d-%d\n",nombre,cuadruploDeEntrada,mainInt,mainFloat,mainStr,mainBool,contEntTmp-10000-restaEnt,contFlotTmp-11000-restaFlo,contStrTmp-12000-restaStr,contBoolTmp-13000-restaBool);
+      restaEnt=contEntTmp-10000;
+      restaFlo=contFlotTmp-11000;
+      restaStr=contStrTmp-12000;
+      restaBool=contBoolTmp-13000;
+      fclose(archivo);
 
 }
 
@@ -910,19 +982,27 @@ int main(int argc,char **argv){
     yyin=fopen(argv[1],"rt");
   else
     //yyin=stdin;
-    yyin=fopen("Programa.ac","rt");
+    yyin=fopen("Programa.ac","rt"); 
 
   yyparse();
-  escribeCuadruplos( startCuadruplos );
-  escribeTabCons(startTabCons);
   FILE *archivo;/*El manejador de archivo*/
-     archivo=fopen("codigointermedio.txt", "a");
-     if(archivo==NULL)/*So no lo logramos abrir, salimos*/
+      archivo=fopen("codigointermedio.txt", "a");
+      if(archivo==NULL)/*So no lo logramos abrir, salimos*/
          exit(EXIT_FAILURE);
       fprintf(archivo, "-\n");
-      fprintf(archivo, "%d-%d-%d-%d\n",globalesInt,globalesFloat,globalesStr,globalesBool);
-      fprintf(archivo,"Main-0-%d-%d-%d-%d-%d-%d-%d-%d",mainInt,mainFloat,mainStr,mainBool,contEntTmp-10000,contFlotTmp-11000,contStrTmp-12000,contBoolTmp-13000);
-      fclose(archivo);
+  fclose(archivo);
+  escribeCuadruplos( startCuadruplos );
+  escribeTabCons(startTabCons);
+  
+  //FILE *archivo;/*El manejador de archivo*/
+    // archivo=fopen("codigointermedio.txt", "a");
+     //if(archivo==NULL)/*So no lo logramos abrir, salimos*/
+       //  exit(EXIT_FAILURE);
+      //fprintf(archivo, "-\n");
+      //fprintf(archivo, "%d-%d-%d-%d\n",globalesInt,globalesFloat,globalesStr,globalesBool);
+      //fprintf(archivo,"Main-0-%d-%d-%d-%d-%d-%d-%d-%d",mainInt,mainFloat,mainStr,mainBool,contEntTmp-10000,contFlotTmp-11000,contStrTmp-12000,contBoolTmp-13000);
+      //fclose(archivo);
+
   //impreciones de prueba
   printf("PilaO \n");
   printStack( PilaO );

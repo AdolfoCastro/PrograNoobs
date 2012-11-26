@@ -58,7 +58,7 @@ public class PrograNoobs implements ActionListener, MouseListener, MouseMotionLi
 		jplProgramName = new JPanel(new BorderLayout());
 		jplProgramName.setOpaque(true);
 		programNameLabel = new JLabel("Nombre del programa: ");
-		textField = new JTextField ("ProgramaUno");
+		textField = new JTextField ("Programa");
 		compileButton = new JButton ("Compilar y Ejecutar");
 		compileButton.addActionListener(this);
 		jplProgramName.add(programNameLabel, BorderLayout.WEST);

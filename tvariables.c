@@ -186,10 +186,13 @@ void existeVar(TvarNodoPtr currentPtr, TvarNodoPtr previousPtr, char *nombre)
          existePtr = existePtr->nextPtr;   
       } // end while
 }
-void existeVarAsignar(TvarNodoPtr currentPtr, TvarNodoPtr previousPtr, char *nombre)
+void existeVarAsignar(TvarNodoPtr currentPtr, TvarNodoPtr previousPtr, char *nombre,TproNodoPtr startProList)
 {
    TvarNodoPtr existePtr;
    existePtr = currentPtr;
+
+   TproNodoPtr variablesGlobales;
+   variablesGlobales=startProList;
    int existe=0;
    int i;
    while ( existePtr != NULL ) {
@@ -200,6 +203,33 @@ void existeVarAsignar(TvarNodoPtr currentPtr, TvarNodoPtr previousPtr, char *nom
       }
          existePtr = existePtr->nextPtr;   
    } // end while
+
+   if (existe==0){
+      while ( variablesGlobales != NULL) {
+        i = strcmp ("Global", variablesGlobales->nombreFuncion);
+
+        //printf("%s-%s\n",nombre,existePtr->nombreVariable);
+        existePtr=variablesGlobales->headTvarPtr;
+        if (i == 0){
+         while ( existePtr != NULL) {
+          i = strcmp (nombre, existePtr->nombreVariable);
+          //printf("%s-%s\n",nombre,existePtr->nombreVariable);
+          if (i == 0){
+            push ( &PilaO, existePtr->direccion);
+            existe=1;
+            break;
+        //printf ("%d\n",direccion);
+          }
+          existePtr = existePtr->nextPtr;
+          } // end while
+
+        }
+        variablesGlobales=variablesGlobales->nextProPtr;
+      } // end while
+
+    }
+
+
    if (existe==0){
       printf("La variable -%s- a la que le quieres asignar un valor no existe \n", nombre);
          exit (EXIT_FAILURE);

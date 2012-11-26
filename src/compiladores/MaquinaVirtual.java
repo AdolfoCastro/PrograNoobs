@@ -14,27 +14,27 @@ import javax.swing.JTextField;
 
 public class MaquinaVirtual {
 	
-	public ArrayList<Quadruplo> quadruplos = new ArrayList<Quadruplo>(); //lista de los quádruplos cargados del código intermedio
-	private ArrayList<VariableInt> contEntGlo = new ArrayList<VariableInt>(); //lista de las variables enteras globales cargadas del código intermedio
-	private ArrayList<VariableFloat> contFlotGlo = new ArrayList<VariableFloat>(); //lista de las variables flotantes globales cargadas del código intermedio
-	private ArrayList<VariableStr> contStrGlo = new ArrayList<VariableStr>(); //lista de las variables String globales cargadas del código intermedio
-	private ArrayList<VariableBool> contBoolGlo = new ArrayList<VariableBool>(); //lista de las variables booleanas globales cargadas del código intermedio
-	private ArrayList<VariableInt> contEntLoc = new ArrayList<VariableInt>(); //lista de las variables enteras locales cargadas del código intermedio
-	private ArrayList<VariableFloat> contFlotLoc = new ArrayList<VariableFloat>(); //lista de las variables flotantes locales cargadas del código intermedio
-	private ArrayList<VariableStr> contStrLoc = new ArrayList<VariableStr>(); //lista de las variables String locales cargadas del código intermedio
-	private ArrayList<VariableBool> contBoolLoc = new ArrayList<VariableBool>(); //lista de las variables booleanas locales cargadas del código intermedio
-	private ArrayList<VariableInt> contEntTmp = new ArrayList<VariableInt>(); //lista de las variables enteras temporales cargadas del código intermedio
-	private ArrayList<VariableFloat> contFlotTmp = new ArrayList<VariableFloat>(); //lista de las variables flotantes temporales cargadas del código intermedio
-	private ArrayList<VariableStr> contStrTmp = new ArrayList<VariableStr>(); //lista de las variables String temporales cargadas del código intermedio
-	private ArrayList<VariableBool> contBoolTmp = new ArrayList<VariableBool>(); //lista de las variables booleanas temporales cargadas del código intermedio
-	private ArrayList<VariableInt> contEntCons = new ArrayList<VariableInt>(); //lista de las variables enteras constantes cargadas del código intermedio
-	private ArrayList<VariableFloat> contFlotCons = new ArrayList<VariableFloat>(); //lista de las variables flotantes constantes cargadas del código intermedio
-	private ArrayList<VariableStr> contStrCons = new ArrayList<VariableStr>(); //lista de las variables String constantes cargadas del código intermedio
-	private ArrayList<VariableBool> contBoolCons = new ArrayList<VariableBool>(); //lista de las variables booleanas constantes cargadas del código intermedio
+	public ArrayList<Quadruplo> quadruplos = new ArrayList<Quadruplo>(); //lista de los quï¿½druplos cargados del cï¿½digo intermedio
+	private ArrayList<VariableInt> contEntGlo = new ArrayList<VariableInt>(); //lista de las variables enteras globales cargadas del cï¿½digo intermedio
+	private ArrayList<VariableFloat> contFlotGlo = new ArrayList<VariableFloat>(); //lista de las variables flotantes globales cargadas del cï¿½digo intermedio
+	private ArrayList<VariableStr> contStrGlo = new ArrayList<VariableStr>(); //lista de las variables String globales cargadas del cï¿½digo intermedio
+	private ArrayList<VariableBool> contBoolGlo = new ArrayList<VariableBool>(); //lista de las variables booleanas globales cargadas del cï¿½digo intermedio
+	private ArrayList<VariableInt> contEntLoc = new ArrayList<VariableInt>(); //lista de las variables enteras locales cargadas del cï¿½digo intermedio
+	private ArrayList<VariableFloat> contFlotLoc = new ArrayList<VariableFloat>(); //lista de las variables flotantes locales cargadas del cï¿½digo intermedio
+	private ArrayList<VariableStr> contStrLoc = new ArrayList<VariableStr>(); //lista de las variables String locales cargadas del cï¿½digo intermedio
+	private ArrayList<VariableBool> contBoolLoc = new ArrayList<VariableBool>(); //lista de las variables booleanas locales cargadas del cï¿½digo intermedio
+	private ArrayList<VariableInt> contEntTmp = new ArrayList<VariableInt>(); //lista de las variables enteras temporales cargadas del cï¿½digo intermedio
+	private ArrayList<VariableFloat> contFlotTmp = new ArrayList<VariableFloat>(); //lista de las variables flotantes temporales cargadas del cï¿½digo intermedio
+	private ArrayList<VariableStr> contStrTmp = new ArrayList<VariableStr>(); //lista de las variables String temporales cargadas del cï¿½digo intermedio
+	private ArrayList<VariableBool> contBoolTmp = new ArrayList<VariableBool>(); //lista de las variables booleanas temporales cargadas del cï¿½digo intermedio
+	private ArrayList<VariableInt> contEntCons = new ArrayList<VariableInt>(); //lista de las variables enteras constantes cargadas del cï¿½digo intermedio
+	private ArrayList<VariableFloat> contFlotCons = new ArrayList<VariableFloat>(); //lista de las variables flotantes constantes cargadas del cï¿½digo intermedio
+	private ArrayList<VariableStr> contStrCons = new ArrayList<VariableStr>(); //lista de las variables String constantes cargadas del cï¿½digo intermedio
+	private ArrayList<VariableBool> contBoolCons = new ArrayList<VariableBool>(); //lista de las variables booleanas constantes cargadas del cï¿½digo intermedio
 	private ArrayList<Procedimiento> procedimientos = new ArrayList<Procedimiento>();
-	private JTextArea jtAreaOutput; //área de texto donde va a imprimir
-	private int [] apuntadoresInstruccion; //apunta a la instrucción a ejecutarse de los quádruplos
-	private int apuntador; //apunta a la posición del arreglo de instruccinoes para ejecutar el quádruplo
+	private JTextArea jtAreaOutput; //ï¿½rea de texto donde va a imprimir
+	private int [] apuntadoresInstruccion; //apunta a la instrucciï¿½n a ejecutarse de los quï¿½druplos
+	private int apuntador; //apunta a la posiciï¿½n del arreglo de instruccinoes para ejecutar el quï¿½druplo
 	private int[] offsets = new int [8];
 	private int[] before = new int[8];
 	private boolean enableOffsets;
@@ -2806,19 +2806,38 @@ public class MaquinaVirtual {
 	/* lee el archivo y coloca los quadruplos en el ArrayList quadruplos.
 	 * params: String fileName
 	 */
-	private void cargaArchivo (String fileName)
+	private  void cargaArchivo (String fileName)
 	{
 		try {
 			BufferedReader archivo = new BufferedReader(new FileReader (fileName));
 			String linea = "";
-			// carga los cuádruplos
+			// agrega las variables globales
+			linea = archivo.readLine();
+			String[] procedimiento = linea.split("-");
+			for (int i = 0; i < Integer.parseInt(procedimiento[0]); i++)
+				contEntGlo.add(new VariableInt());
+			for (int i = 0; i < Integer.parseInt(procedimiento[1]); i++)
+				contFlotGlo.add(new VariableFloat());
+			for (int i = 0; i < Integer.parseInt(procedimiento[2]); i++)
+				contStrGlo.add(new VariableStr());
+			for (int i = 0; i < Integer.parseInt(procedimiento[3]); i++)
+				contBoolGlo.add(new VariableBool());
+			// carga el directorio de procedimientos
+			while ((linea = archivo.readLine()) != null && !linea.equals("-")) {
+				procedimiento = linea.split("-");
+				procedimientos.add(new Procedimiento(procedimiento[0], Integer.parseInt(procedimiento[1]), Integer.parseInt(procedimiento[2]),
+						Integer.parseInt(procedimiento[3]), Integer.parseInt(procedimiento[4]), Integer.parseInt(procedimiento[5]),
+								Integer.parseInt(procedimiento[6]), Integer.parseInt(procedimiento[7]),
+										Integer.parseInt(procedimiento[8]), Integer.parseInt(procedimiento[9])));
+			}
+			// carga los cuÃ¡druplos
 			while ((linea = archivo.readLine()) != null && !linea.equals("-"))
 			{
 				String[] quadruplo = linea.split(",");
 				quadruplos.add(0, new Quadruplo(quadruplo[0],quadruplo[1],quadruplo[2],quadruplo[3].trim()));
 			}
 			// carga las constantes
-			while ((linea = archivo.readLine()) != null && !linea.equals("-")) {
+			while ((linea = archivo.readLine()) != null && !linea.equals("")) {
 				String[] variable = linea.split("-");
 				int direccion = Integer.parseInt(variable[0]) - 15000;
 				if (direccion >= 0 && direccion < 1000) {
@@ -2834,25 +2853,7 @@ public class MaquinaVirtual {
 					contBoolCons.add(0,new VariableBool(variable[1].trim()));
 				}
 			}
-			// agrega las variables globales
-			linea = archivo.readLine();
-			String[] procedimiento = linea.split("-");
-			for (int i = 0; i < Integer.parseInt(procedimiento[0]); i++)
-				contEntGlo.add(new VariableInt());
-			for (int i = 0; i < Integer.parseInt(procedimiento[1]); i++)
-				contFlotGlo.add(new VariableFloat());
-			for (int i = 0; i < Integer.parseInt(procedimiento[2]); i++)
-				contStrGlo.add(new VariableStr());
-			for (int i = 0; i < Integer.parseInt(procedimiento[3]); i++)
-				contBoolGlo.add(new VariableBool());
-			// carga el directorio de procedimientos
-			while ((linea = archivo.readLine()) != null && !linea.equals("")) {
-				procedimiento = linea.split("-");
-				procedimientos.add(new Procedimiento(procedimiento[0], Integer.parseInt(procedimiento[1]), Integer.parseInt(procedimiento[2]),
-						Integer.parseInt(procedimiento[3]), Integer.parseInt(procedimiento[4]), Integer.parseInt(procedimiento[5]),
-								Integer.parseInt(procedimiento[6]), Integer.parseInt(procedimiento[7]),
-										Integer.parseInt(procedimiento[8]), Integer.parseInt(procedimiento[9])));
-			}
+			
 			archivo.close();
 		}
 		catch (Exception e) {
@@ -2862,7 +2863,7 @@ public class MaquinaVirtual {
 		}
 	}
 	
-	// Obtiene el valor de la dirección que se proporciona y regresa el valor y su tipo de dato
+	// Obtiene el valor de la direcciï¿½n que se proporciona y regresa el valor y su tipo de dato
 	private String[] getValor (int direccionVar1, int[] offsets) {
 		String[] valores = new String[2];
 		if (direccionVar1 >= 0 && direccionVar1 < 5000) {
@@ -2971,7 +2972,7 @@ public class MaquinaVirtual {
 		return valores;
 	}
 	
-	// método para cargar las variables locales y temporales de una función
+	// mï¿½todo para cargar las variables locales y temporales de una funciï¿½n
 	private void cargaProcedimiento(String nombre) {
 		int procACargar = 0;
 		while (!procedimientos.get(procACargar).getNombre().equals(nombre))
@@ -2994,7 +2995,7 @@ public class MaquinaVirtual {
 			contBoolTmp.add(new VariableBool());
 	}
 	
-	// método para descargar las variables locales y temporales de una función
+	// mï¿½todo para descargar las variables locales y temporales de una funciï¿½n
 		private void descargaProcedimiento(String nombre) {
 			int procACargar = 0;
 			while (!procedimientos.get(procACargar).getNombre().equals(nombre))
@@ -3025,7 +3026,7 @@ public class MaquinaVirtual {
 			}
 		}
 	
-	// método para encontrar el cuádruplo inicial de la función
+	// mï¿½todo para encontrar el cuï¿½druplo inicial de la funciï¿½n
 	private int getNumeroInstruccion (String nombre) {
 		int procACargar = 0;
 		while (!procedimientos.get(procACargar).getNombre().equals(nombre))
