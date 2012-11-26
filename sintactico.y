@@ -166,9 +166,9 @@ programa:PROG ID LLAVEA {gltc=1;}{insertPro(&startProList,"Global",5,1);}a
   globalesBool=cuentaBool;
   cuentaBool =0;
 }
- {gltc=2;} main
+ {gltc=2;} main b
 
-b LLAVEC {printf("Programa hecho \n");};
+LLAVEC {printf("Programa hecho \n");};
 a:vars a;
 a:vacio;
 b:funcion b;
