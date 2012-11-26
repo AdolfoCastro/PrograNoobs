@@ -866,6 +866,8 @@ void tresEstIf(){
   pop(&Saltos); 
 }
 
+
+
 void EscrituraWrite(char *nombre){
   int direccion;
   direccion = direccionVariable(nombre);
