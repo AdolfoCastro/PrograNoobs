@@ -58,7 +58,7 @@ public class PrograNoobs implements ActionListener, MouseListener, MouseMotionLi
 		jplProgramName = new JPanel(new BorderLayout());
 		jplProgramName.setOpaque(true);
 		programNameLabel = new JLabel("Nombre del programa: ");
-		textField = new JTextField ("Programa");
+		textField = new JTextField ("ProgramaUno");
 		compileButton = new JButton ("Compilar y Ejecutar");
 		compileButton.addActionListener(this);
 		jplProgramName.add(programNameLabel, BorderLayout.WEST);
@@ -140,11 +140,10 @@ public class PrograNoobs implements ActionListener, MouseListener, MouseMotionLi
 			jtAreaOutput.setCaretPosition(jtAreaOutput.getDocument().getLength());
 			generateOutputCode();
 			try {
-				Process p; //TODO invocar a la(s) funcion(es) correcta
-                        p = Runtime.getRuntime().exec("./compilador");
+				Process p = Runtime.getRuntime().exec("./compilador"); //TODO invocar a la(s) funcion(es) correcta
 				BufferedReader input = new BufferedReader (new InputStreamReader(p.getInputStream()));
 				String line;
-				if ((line = input.readLine()).equals("5000")) {
+				if ((line = input.readLine()).equals("0")) {
 					s = "El programa se compil� exitosamente";
 					jtAreaOutput.append(s + "\n");
 					jtAreaOutput.setCaretPosition(jtAreaOutput.getDocument().getLength());
@@ -453,6 +452,7 @@ public class PrograNoobs implements ActionListener, MouseListener, MouseMotionLi
 				int nivelAnterior = 0;
 				int faltaCerrar = 0;
 				for (int j = 0; j < componentes.size(); j++) {
+					boolean escrito = false;
 					if (!componentes.get(j).getTipo().equals("linea") && !componentes.get(j).getTipo().equals("oval")) {
 						int nivelActual = componentes.get(j).getNivel();
 						String indentizacionInterna = "";
@@ -461,6 +461,7 @@ public class PrograNoobs implements ActionListener, MouseListener, MouseMotionLi
 						if (nivelActual < nivelAnterior || componentes.get(j).getPolygon().xpoints[0] > mitad) {
 							out.write(indentizacion + indentizacionInterna + "}");
 							if (componentes.get(j).getPolygon().xpoints[0] > mitad) {
+								escrito = true;
 								if (indentizacionInterna.length() > 2)
 									indentizacionInterna = indentizacionInterna.substring(0, indentizacionInterna.length()-2);
 								out.write(indentizacion + indentizacionInterna + "else {");
@@ -485,20 +486,22 @@ public class PrograNoobs implements ActionListener, MouseListener, MouseMotionLi
 							else
 								faltaCerrar--;
 						}
-						if (componentes.get(j).getTipo().equals("Ciclo")) {
-							String contenido = componentes.get(j).getContenido();
-							out.write(indentizacion + indentizacionInterna + "while (" + contenido + ") {");
-							faltaCerrar++;
-						} 
-						else if (componentes.get(j).getTipo().equals("Condici�n")) {
-							String contenido = componentes.get(j).getContenido();
-							out.write(indentizacion + indentizacionInterna + "if (" + contenido + ") {");
-							faltaCerrar++;
-						}
-						else {
-							String [] contenido = componentes.get(j).getContenido().split("\n");
-							for (int c = 0; c < contenido.length; c++) {
-								out.write(indentizacion + indentizacionInterna + contenido[c] + ";");
+						if (!escrito) {
+							if (componentes.get(j).getTipo().equals("Ciclo")) {
+								String contenido = componentes.get(j).getContenido();
+								out.write(indentizacion + indentizacionInterna + "while (" + contenido + ") {");
+								faltaCerrar++;
+							} 
+							else if (componentes.get(j).getTipo().equals("Condici�n")) {
+								String contenido = componentes.get(j).getContenido();
+								out.write(indentizacion + indentizacionInterna + "if (" + contenido + ") {");
+								faltaCerrar++;
+							}
+							else {
+								String [] contenido = componentes.get(j).getContenido().split("\n");
+								for (int c = 0; c < contenido.length; c++) {
+									out.write(indentizacion + indentizacionInterna + contenido[c] + ";");
+								}
 							}
 						}
 						nivelAnterior = nivelActual;

@@ -1,4 +1,4 @@
-program Programa {
+program ProgramaUno {
 
 
 	function Main(){
@@ -7,8 +7,7 @@ program Programa {
 		a=0;
 		b=1;
 		while (a<10) {
-			a=(a+1);
-			print(a);
+			a=a+1;
 		}
 		print (a);
 	}

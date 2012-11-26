@@ -35,9 +35,10 @@ public class MaquinaVirtual {
 	private JTextArea jtAreaOutput; //área de texto donde va a imprimir
 	private int [] apuntadoresInstruccion; //apunta a la instrucción a ejecutarse de los quádruplos
 	private int apuntador; //apunta a la posición del arreglo de instruccinoes para ejecutar el quádruplo
-	private int[] offsets = new int [8];;
+	private int[] offsets = new int [8];
 	private int[] before = new int[8];
 	private boolean enableOffsets;
+	private boolean useBeforeOffsetsValues;
 	private ArrayList<String> procedimientoActual = new ArrayList<String>();
 	
 	// inicializa la maquina virtual
@@ -50,6 +51,8 @@ public class MaquinaVirtual {
 			offsets[i] = 0;
 		apuntador = 0;
 		enableOffsets = false;
+		useBeforeOffsetsValues = false;
+		//ejecutar ("codigointermedio.txt");
 	}
 	
 	/* ejecuta el programa.
@@ -69,13 +72,18 @@ public class MaquinaVirtual {
 			String[] valores1 = new String[2];
 			String[] valores2 = new String[2];
 			if ((comando >= 1 && comando <= 4) || (direccionVar1 != 0 && comando != 20 && comando != 40 && comando != 42)) {
-				if (apuntadoresInstruccion[apuntador] == 7)
+				if (useBeforeOffsetsValues)
 					valores1 = getValor(direccionVar1, before);
 				else
 					valores1 = getValor(direccionVar1, offsets);
 			}
-			if ((comando >= 1 && comando <= 4) || (direccionVar2 != 0 && comando != 20 && comando != 40 && comando != 42))
-				valores2 = getValor(direccionVar2, offsets);
+			if ((comando >= 1 && comando <= 4) || (direccionVar2 != 0 && comando != 20 && comando != 40 && comando != 42)) {
+				if (useBeforeOffsetsValues)
+					valores2 = getValor(direccionVar2, before);
+				else
+					valores2 = getValor(direccionVar2, offsets);
+			}
+				
 			switch (comando)
 			{
 			case 1: // +
@@ -171,10 +179,16 @@ public class MaquinaVirtual {
 					if (direccionDestino >= 0 && direccionDestino < 1000) {
 						if (valores1[1].equals("int")) {
 							if (valores2[1].equals("int")) {
-								contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntLoc.get(direccionDestino+(enableOffsets?before[0]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								else
+									contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntLoc.get(direccionDestino+(enableOffsets?before[0]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								else
+									contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -182,10 +196,16 @@ public class MaquinaVirtual {
 						}					
 						else if (valores1[1].equals("boolean")) {
 							if (valores2[1].equals("int")) {
-								contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntLoc.get(direccionDestino+(enableOffsets?before[0]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								else
+									contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntLoc.get(direccionDestino+(enableOffsets?before[0]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								else
+									contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -199,13 +219,22 @@ public class MaquinaVirtual {
 						direccionDestino -= 1000;
 						if (valores1[1].equals("int")) {
 							if (valores2[1].equals("int")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("float")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) + Float.parseFloat(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Integer.parseInt(valores1[0]) + Float.parseFloat(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) + Float.parseFloat(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -213,13 +242,22 @@ public class MaquinaVirtual {
 						}
 						if (valores1[1].equals("float")) {
 							if (valores2[1].equals("int")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) + Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Float.parseFloat(valores1[0]) + Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) + Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("float")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) + Float.parseFloat(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Float.parseFloat(valores1[0]) + Float.parseFloat(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) + Float.parseFloat(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) + Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Float.parseFloat(valores1[0]) + Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) + Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -227,10 +265,16 @@ public class MaquinaVirtual {
 						}	
 						else if (valores1[1].equals("boolean")) {
 							if (valores2[1].equals("int")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -258,10 +302,16 @@ public class MaquinaVirtual {
 					if (direccionDestino >= 0 && direccionDestino < 1000) {
 						if (valores1[1].equals("int")) {
 							if (valores2[1].equals("int")) {
-								contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntTmp.get(direccionDestino+(enableOffsets?before[4]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								else
+									contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntTmp.get(direccionDestino+(enableOffsets?before[4]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								else
+									contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
 								
 							}
 							else {
@@ -270,10 +320,16 @@ public class MaquinaVirtual {
 						}					
 						else if (valores1[1].equals("boolean")) {
 							if (valores2[1].equals("int")) {
-								contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntTmp.get(direccionDestino+(enableOffsets?before[4]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								else
+									contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntTmp.get(direccionDestino+(enableOffsets?before[4]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								else
+									contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -287,13 +343,22 @@ public class MaquinaVirtual {
 						direccionDestino -= 1000;
 						if (valores1[1].equals("int")) {
 							if (valores2[1].equals("int")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("float")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) + Float.parseFloat(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Integer.parseInt(valores1[0]) + Float.parseFloat(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) + Float.parseFloat(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -301,13 +366,22 @@ public class MaquinaVirtual {
 						}
 						if (valores1[1].equals("float")) {
 							if (valores2[1].equals("int")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) + Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Float.parseFloat(valores1[0]) + Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) + Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("float")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) + Float.parseFloat(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Float.parseFloat(valores1[0]) + Float.parseFloat(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) + Float.parseFloat(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) + Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Float.parseFloat(valores1[0]) + Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) + Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -315,10 +389,16 @@ public class MaquinaVirtual {
 						}	
 						else if (valores1[1].equals("boolean")) {
 							if (valores2[1].equals("int")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) + Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -465,10 +545,16 @@ public class MaquinaVirtual {
 					if (direccionDestino >= 0 && direccionDestino < 1000) {
 						if (valores1[1].equals("int")) {
 							if (valores2[1].equals("int")) {
-								contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntLoc.get(direccionDestino+(enableOffsets?before[0]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								else
+									contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntLoc.get(direccionDestino+(enableOffsets?before[0]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								else
+									contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -476,10 +562,16 @@ public class MaquinaVirtual {
 						}					
 						else if (valores1[1].equals("boolean")) {
 							if (valores2[1].equals("int")) {
-								contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntLoc.get(direccionDestino+(enableOffsets?before[0]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								else
+									contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntLoc.get(direccionDestino+(enableOffsets?before[0]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								else
+									contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -493,13 +585,22 @@ public class MaquinaVirtual {
 						direccionDestino -= 1000;
 						if (valores1[1].equals("int")) {
 							if (valores2[1].equals("int")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("float")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) - Float.parseFloat(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Integer.parseInt(valores1[0]) - Float.parseFloat(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) - Float.parseFloat(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -507,13 +608,22 @@ public class MaquinaVirtual {
 						}
 						if (valores1[1].equals("float")) {
 							if (valores2[1].equals("int")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) - Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Float.parseFloat(valores1[0]) - Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) - Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("float")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) - Float.parseFloat(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Float.parseFloat(valores1[0]) - Float.parseFloat(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) - Float.parseFloat(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) - Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Float.parseFloat(valores1[0]) - Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) - Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -521,10 +631,16 @@ public class MaquinaVirtual {
 						}	
 						else if (valores1[1].equals("boolean")) {
 							if (valores2[1].equals("int")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -552,10 +668,16 @@ public class MaquinaVirtual {
 					if (direccionDestino >= 0 && direccionDestino < 1000) {
 						if (valores1[1].equals("int")) {
 							if (valores2[1].equals("int")) {
-								contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntTmp.get(direccionDestino+(enableOffsets?before[4]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								else
+									contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntTmp.get(direccionDestino+(enableOffsets?before[4]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								else
+									contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
 								
 							}
 							else {
@@ -564,10 +686,16 @@ public class MaquinaVirtual {
 						}					
 						else if (valores1[1].equals("boolean")) {
 							if (valores2[1].equals("int")) {
-								contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntTmp.get(direccionDestino+(enableOffsets?before[4]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								else
+									contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntTmp.get(direccionDestino+(enableOffsets?before[4]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								else
+									contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -581,13 +709,22 @@ public class MaquinaVirtual {
 						direccionDestino -= 1000;
 						if (valores1[1].equals("int")) {
 							if (valores2[1].equals("int")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("float")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) - Float.parseFloat(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Integer.parseInt(valores1[0]) - Float.parseFloat(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) - Float.parseFloat(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -595,13 +732,22 @@ public class MaquinaVirtual {
 						}
 						if (valores1[1].equals("float")) {
 							if (valores2[1].equals("int")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) - Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Float.parseFloat(valores1[0]) - Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) - Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("float")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) - Float.parseFloat(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Float.parseFloat(valores1[0]) - Float.parseFloat(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) - Float.parseFloat(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) - Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Float.parseFloat(valores1[0]) - Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) - Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -609,10 +755,16 @@ public class MaquinaVirtual {
 						}	
 						else if (valores1[1].equals("boolean")) {
 							if (valores2[1].equals("int")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) - Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -816,10 +968,16 @@ public class MaquinaVirtual {
 					if (direccionDestino >= 0 && direccionDestino < 1000) {
 						if (valores1[1].equals("int")) {
 							if (valores2[1].equals("int")) {
-								contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntLoc.get(direccionDestino+(enableOffsets?before[0]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								else
+									contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntLoc.get(direccionDestino+(enableOffsets?before[0]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								else
+									contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -827,10 +985,16 @@ public class MaquinaVirtual {
 						}					
 						else if (valores1[1].equals("boolean")) {
 							if (valores2[1].equals("int")) {
-								contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntLoc.get(direccionDestino+(enableOffsets?before[0]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								else
+									contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntLoc.get(direccionDestino+(enableOffsets?before[0]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								else
+									contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -844,13 +1008,22 @@ public class MaquinaVirtual {
 						direccionDestino -= 1000;
 						if (valores1[1].equals("int")) {
 							if (valores2[1].equals("int")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("float")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) * Float.parseFloat(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Integer.parseInt(valores1[0]) * Float.parseFloat(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) * Float.parseFloat(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -858,13 +1031,22 @@ public class MaquinaVirtual {
 						}
 						if (valores1[1].equals("float")) {
 							if (valores2[1].equals("int")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) * Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Float.parseFloat(valores1[0]) * Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) * Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("float")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) * Float.parseFloat(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Float.parseFloat(valores1[0]) * Float.parseFloat(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) * Float.parseFloat(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) * Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Float.parseFloat(valores1[0]) * Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) * Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -872,10 +1054,16 @@ public class MaquinaVirtual {
 						}	
 						else if (valores1[1].equals("boolean")) {
 							if (valores2[1].equals("int")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -903,10 +1091,16 @@ public class MaquinaVirtual {
 					if (direccionDestino >= 0 && direccionDestino < 1000) {
 						if (valores1[1].equals("int")) {
 							if (valores2[1].equals("int")) {
-								contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntTmp.get(direccionDestino+(enableOffsets?before[4]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								else
+									contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntTmp.get(direccionDestino+(enableOffsets?before[4]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								else
+									contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
 								
 							}
 							else {
@@ -915,10 +1109,16 @@ public class MaquinaVirtual {
 						}					
 						else if (valores1[1].equals("boolean")) {
 							if (valores2[1].equals("int")) {
-								contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntTmp.get(direccionDestino+(enableOffsets?before[4]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								else
+									contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntTmp.get(direccionDestino+(enableOffsets?before[4]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								else
+									contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -932,13 +1132,22 @@ public class MaquinaVirtual {
 						direccionDestino -= 1000;
 						if (valores1[1].equals("int")) {
 							if (valores2[1].equals("int")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("float")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) * Float.parseFloat(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Integer.parseInt(valores1[0]) * Float.parseFloat(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) * Float.parseFloat(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -946,13 +1155,22 @@ public class MaquinaVirtual {
 						}
 						if (valores1[1].equals("float")) {
 							if (valores2[1].equals("int")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) * Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Float.parseFloat(valores1[0]) * Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) * Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("float")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) * Float.parseFloat(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Float.parseFloat(valores1[0]) * Float.parseFloat(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) * Float.parseFloat(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) * Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Float.parseFloat(valores1[0]) * Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) * Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -960,10 +1178,16 @@ public class MaquinaVirtual {
 						}	
 						else if (valores1[1].equals("boolean")) {
 							if (valores2[1].equals("int")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) * Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -1167,10 +1391,16 @@ public class MaquinaVirtual {
 					if (direccionDestino >= 0 && direccionDestino < 1000) {
 						if (valores1[1].equals("int")) {
 							if (valores2[1].equals("int")) {
-								contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntLoc.get(direccionDestino+(enableOffsets?before[0]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								else
+									contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntLoc.get(direccionDestino+(enableOffsets?before[0]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								else
+									contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -1178,10 +1408,16 @@ public class MaquinaVirtual {
 						}					
 						else if (valores1[1].equals("boolean")) {
 							if (valores2[1].equals("int")) {
-								contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntLoc.get(direccionDestino+(enableOffsets?before[0]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								else
+									contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntLoc.get(direccionDestino+(enableOffsets?before[0]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								else
+									contEntLoc.get(direccionDestino+(enableOffsets?offsets[0]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -1195,13 +1431,22 @@ public class MaquinaVirtual {
 						direccionDestino -= 1000;
 						if (valores1[1].equals("int")) {
 							if (valores2[1].equals("int")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("float")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) / Float.parseFloat(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Integer.parseInt(valores1[0]) / Float.parseFloat(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) / Float.parseFloat(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -1209,13 +1454,22 @@ public class MaquinaVirtual {
 						}
 						if (valores1[1].equals("float")) {
 							if (valores2[1].equals("int")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) / Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Float.parseFloat(valores1[0]) / Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) / Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("float")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) / Float.parseFloat(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Float.parseFloat(valores1[0]) / Float.parseFloat(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) / Float.parseFloat(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) / Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Float.parseFloat(valores1[0]) / Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Float.parseFloat(valores1[0]) / Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -1223,10 +1477,16 @@ public class MaquinaVirtual {
 						}	
 						else if (valores1[1].equals("boolean")) {
 							if (valores2[1].equals("int")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotLoc.get(direccionDestino+(enableOffsets?before[1]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								else
+									contFlotLoc.get(direccionDestino+(enableOffsets?offsets[1]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -1254,10 +1514,16 @@ public class MaquinaVirtual {
 					if (direccionDestino >= 0 && direccionDestino < 1000) {
 						if (valores1[1].equals("int")) {
 							if (valores2[1].equals("int")) {
-								contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntTmp.get(direccionDestino+(enableOffsets?before[4]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								else
+									contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntTmp.get(direccionDestino+(enableOffsets?before[4]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								else
+									contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
 								
 							}
 							else {
@@ -1266,10 +1532,16 @@ public class MaquinaVirtual {
 						}					
 						else if (valores1[1].equals("boolean")) {
 							if (valores2[1].equals("int")) {
-								contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntTmp.get(direccionDestino+(enableOffsets?before[4]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								else
+									contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contEntTmp.get(direccionDestino+(enableOffsets?before[4]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								else
+									contEntTmp.get(direccionDestino+(enableOffsets?offsets[4]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -1283,13 +1555,22 @@ public class MaquinaVirtual {
 						direccionDestino -= 1000;
 						if (valores1[1].equals("int")) {
 							if (valores2[1].equals("int")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("float")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) / Float.parseFloat(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Integer.parseInt(valores1[0]) / Float.parseFloat(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) / Float.parseFloat(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -1297,13 +1578,22 @@ public class MaquinaVirtual {
 						}
 						if (valores1[1].equals("float")) {
 							if (valores2[1].equals("int")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) / Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Float.parseFloat(valores1[0]) / Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) / Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("float")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) / Float.parseFloat(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Float.parseFloat(valores1[0]) / Float.parseFloat(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) / Float.parseFloat(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) / Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Float.parseFloat(valores1[0]) / Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Float.parseFloat(valores1[0]) / Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -1311,10 +1601,16 @@ public class MaquinaVirtual {
 						}	
 						else if (valores1[1].equals("boolean")) {
 							if (valores2[1].equals("int")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
 							}
 							else if (valores2[1].equals("boolean")) {
-								contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								if (useBeforeOffsetsValues)
+									contFlotTmp.get(direccionDestino+(enableOffsets?before[5]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
+								else
+									contFlotTmp.get(direccionDestino+(enableOffsets?offsets[5]:0)).setValor(Integer.parseInt(valores1[0]) / Integer.parseInt(valores2[0]));
 							}
 							else {
 								// error porque tiene que ser entero
@@ -2130,6 +2426,7 @@ public class MaquinaVirtual {
 					apuntadoresInstruccion[apuntador] = direccionDestino;
 				break;
 			case 30: // print
+				//System.out.println(valores1[0]);
 				jtAreaOutput.append(valores1[0] + "\n");
 				jtAreaOutput.setCaretPosition(jtAreaOutput.getDocument().getLength());
 				break;
@@ -2230,6 +2527,8 @@ public class MaquinaVirtual {
 				}
 				break;
 			case 40: // ERA
+				for (int i = 0; i < before.length; i++)
+					before[i] = offsets[i];
 				offsets[0] = contEntLoc.size();
 				offsets[1] = contFlotLoc.size();
 				offsets[2] = contStrLoc.size();
@@ -2239,11 +2538,11 @@ public class MaquinaVirtual {
 				offsets[6] = contStrTmp.size();
 				offsets[7] = contBoolTmp.size();
 				cargaProcedimiento(quadruplos.get(apuntadoresInstruccion[apuntador]).getVariable1());
+				if (Integer.parseInt(quadruplos.get(apuntadoresInstruccion[apuntador+1]).getComando()) != 41)
+					useBeforeOffsetsValues = true;
 				break;
 			case 41: // param
 				enableOffsets = true;
-				for (int i = 0; i < before.length; i++)
-					before[i] = offsets[i];
 				if (direccionDestino >= 0 && direccionDestino < 5000) {
 					if (direccionDestino >= 0 && direccionDestino < 1000) {
 						if (valores1[1].equals("int")) {
@@ -2427,8 +2726,10 @@ public class MaquinaVirtual {
 						//No se usa
 					}
 				}
+				useBeforeOffsetsValues = true;
 				break;
 			case 42: // gosub
+				useBeforeOffsetsValues = false;
 				apuntador++;
 				apuntadoresInstruccion[apuntador] = getNumeroInstruccion(quadruplos.get(apuntadoresInstruccion[apuntador-1]).getVariable1());
 				procedimientoActual.add(quadruplos.get(apuntadoresInstruccion[apuntador-1]).getVariable1());
@@ -2555,9 +2856,9 @@ public class MaquinaVirtual {
 			archivo.close();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
-			//jtAreaOutput.append(e.toString() + "\n");
-			//jtAreaOutput.setCaretPosition(jtAreaOutput.getDocument().getLength());
+			//e.printStackTrace();
+			jtAreaOutput.append(e.toString() + "\n");
+			jtAreaOutput.setCaretPosition(jtAreaOutput.getDocument().getLength());
 		}
 	}
 	

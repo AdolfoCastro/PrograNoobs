@@ -416,7 +416,7 @@ void unoExpIntCons(int valor){
   char buffer [50];
   if (gltc==4){
     push (&PilaO,contEntCons);
-    //push(&PTipos,1);
+    push(&PTipos,1);
     insertTabCons (&startTabCons,valor,contEntCons);
     contEntCons++;
   }
@@ -445,7 +445,7 @@ void unoExpFloat(char *nombre){
 void unoExpFloatCons(int valor){
   if (gltc==4){
     push(&PilaO,contFlotCons);
-    //push(&PTipos,2);
+    push(&PTipos,2);
     insertTabCons (&startTabCons,valor,contFlotCons);
     contFlotCons++;
   }
@@ -473,7 +473,7 @@ void unoExpStr(char *nombre){
 void unoExpStrCons(int valor){
   if (gltc==4){
     push (&PilaO, contStrCons);
-    //push(&PTipos,3);
+    push(&PTipos,3);
     insertTabCons (&startTabCons,valor,contStrCons);
     contStrCons++;
   }
@@ -501,7 +501,7 @@ void unoExpBool(char *nombre){
 void unoExpBoolCons(int valor){
   if (gltc==4){
     push (&PilaO, contBoolCons);
-    //push(&PTipos,4);
+    push(&PTipos,4);
     insertTabCons (&startTabCons,valor,contBoolCons);
     contBoolCons++;
   }
@@ -738,8 +738,10 @@ void nueveExp(char *nombre){
       pop(&PilaO);
       //printf("%d \n", PilaO->data);
       int resultado = direccionVariable(nombreDeVariable);
+      push (&PilaO,resultado);
       pop(&PilaO);
       int operando2=0;
+
       insertCuadruplos( &startCuadruplos, operacion, operando1, operando2,resultado);
     }
   }
@@ -767,22 +769,30 @@ void diezExp(char *nombre){
 }
 int direccionVariable(char *nombre){
 //reviza la direccion de las variables; 
-    TvarNodoPtr existePtr;
+    TvarNodoPtr existePtr; 
     existePtr = startProList->headTvarPtr;
-    int esta = 0;
+    //printf("%s\n",startProList->headTvarPtr->nombreVariable );
+    TproNodoPtr variablesGlobales;
+    variablesGlobales=startProList;
     int i;
     int direccion;
+    int existe;
 
-    while ( existePtr != NULL ) {
+    while ( existePtr != NULL) {
       i = strcmp (nombre, existePtr->nombreVariable);
-       //printf("%s-%s",nombre,existePtr->nombreVariable);
+       //printf("%s-%s\n",nombre,existePtr->nombreVariable);
       if (i == 0){
         direccion = existePtr->direccion;
+        existe=1;
+        break;
         //printf ("%d\n",direccion);
       }
-      existePtr = existePtr->nextPtr;   
+      existePtr = existePtr->nextPtr;
     } // end while
+    
+
     return direccion;
+
 }
 void cuadruplosComparaciones(int tipoComp){
   int operacion;
