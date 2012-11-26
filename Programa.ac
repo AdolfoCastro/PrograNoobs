@@ -2,16 +2,16 @@ program Programa {
 
 
 	function Main(){
+		
 		int a;
-		int b;
 		a=(10);
-		b=(10);
-		if (a == 0){
-			print (b);
+		if(a==0){
+		a=(20);
+		}else{
 		}
-		else{
-			print (a);
-		}
+	}
+	function int Uno(){
+
 	}
 
 }

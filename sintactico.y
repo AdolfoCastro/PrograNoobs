@@ -49,7 +49,9 @@ void tresEstIf();
 
 
 //Estatuto WHILE
-//
+void unoEstWhile();
+void dosEstWhile();
+void tresEstWhile();
 //Escritura
 
 //
@@ -251,7 +253,6 @@ estatuto:escritura;
 estatuto:asignacion;
 estatuto:llamada;
 estatuto:vars;
-
 /**********main****************/
 main: FUNC MAIN {insertPro(&startProList,"main",estipo,1);}PARA h PARC LLAVEA i LLAVEC {/*printf("funcion \n");*/};
 
@@ -274,7 +275,7 @@ m:cons;
 condicion:{eragltc=gltc; gltc=3; }IF PARA k PARC{unoEstIf();} LLAVEA bloque LLAVEC l{gltc=eragltc};
 k:expresion k;
 k:vacio;
-l:ELSE{dosEstIf();} LLAVEA bloque LLAVEC{/*tresEstIf();*/};
+l:ELSE{dosEstIf();} LLAVEA bloque LLAVEC{tresEstIf();};
 l:vacio;
 
 
@@ -291,7 +292,7 @@ o:vacio;
 lectura:READ PARA tipo PARC PTCM;
 
 /**********ciclo*************/
-ciclo:{eragltc=gltc; gltc=3;}WHILE PARA expresion PARC LLAVEA bloque LLAVEC{gltc=eragltc};
+ciclo:{eragltc=gltc; gltc=3;}WHILE{unoEstWhile();} PARA expresion PARC LLAVEA{dosEstWhile();} bloque LLAVEC{tresEstWhile();}{gltc=eragltc};
 
 /**********expresion*************/
 expresion: exp p;
@@ -415,7 +416,7 @@ void unoExpIntCons(int valor){
   char buffer [50];
   if (gltc==4){
     push (&PilaO,contEntCons);
-    push(&PTipos,1);
+    //push(&PTipos,1);
     insertTabCons (&startTabCons,valor,contEntCons);
     contEntCons++;
   }
@@ -444,7 +445,7 @@ void unoExpFloat(char *nombre){
 void unoExpFloatCons(int valor){
   if (gltc==4){
     push(&PilaO,contFlotCons);
-    push(&PTipos,2);
+    //push(&PTipos,2);
     insertTabCons (&startTabCons,valor,contFlotCons);
     contFlotCons++;
   }
@@ -472,8 +473,8 @@ void unoExpStr(char *nombre){
 void unoExpStrCons(int valor){
   if (gltc==4){
     push (&PilaO, contStrCons);
-    push(&PTipos,3);
-    //insertTabCons (&startTabCons,valor,contStrCons);
+    //push(&PTipos,3);
+    insertTabCons (&startTabCons,valor,contStrCons);
     contStrCons++;
   }
 }
@@ -500,8 +501,8 @@ void unoExpBool(char *nombre){
 void unoExpBoolCons(int valor){
   if (gltc==4){
     push (&PilaO, contBoolCons);
-    push(&PTipos,4);
-    //insertTabCons (&startTabCons,valor,contBoolCons);
+    //push(&PTipos,4);
+    insertTabCons (&startTabCons,valor,contBoolCons);
     contBoolCons++;
   }
 }
@@ -661,38 +662,38 @@ void cincoExp(){
          }
       }
 
-      printf ("%d ", POper->data);
+      //printf ("%d ", POper->data);
       int operacion=POper->data;
       pop(&POper);
-      printf("%d ", PilaO->data);
+      //printf("%d ", PilaO->data);
       int operando2 = PilaO->data;
       pop(&PilaO);
-      printf("%d ", PilaO->data);
+      //printf("%d ", PilaO->data);
       int operando1 = PilaO->data;
       pop(&PilaO);
       push(&PTipos,tipoRes);
 
       if(tipoRes == 1){
         push(&PilaO, contEntTmp);
-        printf("%d\n", contEntTmp );
+        //printf("%d\n", contEntTmp );
         resultado = contEntTmp;
         contEntTmp++;
       }
       if(tipoRes == 2){
         push(&PilaO, contFlotTmp);
-        printf("%d\n", contFlotTmp );
+        //printf("%d\n", contFlotTmp );
         resultado = contFlotTmp;
         contFlotTmp++;
       }
       if(tipoRes == 3){
         push(&PilaO, contStrTmp);
-        printf("%d\n", contStrTmp );
+        //printf("%d\n", contStrTmp );
         resultado = contStrTmp;
         contStrTmp++;
       }
       if(tipoRes == 4){
         push(&PilaO, contBoolTmp);
-        printf("%d\n", contBoolTmp );
+        //printf("%d\n", contBoolTmp );
         resultado = contBoolTmp;
         contBoolTmp++;
       }
@@ -743,25 +744,6 @@ void nueveExp(char *nombre){
     }
   }
 }
-int direccionVariable(char *nombre){
-  //revisa que los nombres de las variables y funciones no existan 
-    TvarNodoPtr existePtr;
-    existePtr = startProList->headTvarPtr;
-    int esta = 0;
-    int i;
-    int direccion;
-
-    while ( existePtr != NULL ) {
-      i = strcmp (nombre, existePtr->nombreVariable);
-       //printf("%s-%s",nombre,existePtr->nombreVariable);
-      if (i == 0){
-        direccion = existePtr->direccion;
-        printf ("%d\n",direccion);
-      }
-      existePtr = existePtr->nextPtr;   
-      } // end while
-      return direccion;
-}
 void diezExp(char *nombre){
   //revisa que los nombres de las variables y funciones no existan 
     TvarNodoPtr existePtr;
@@ -783,6 +765,25 @@ void diezExp(char *nombre){
       exit(EXIT_FAILURE);
     }
 }
+int direccionVariable(char *nombre){
+//reviza la direccion de las variables; 
+    TvarNodoPtr existePtr;
+    existePtr = startProList->headTvarPtr;
+    int esta = 0;
+    int i;
+    int direccion;
+
+    while ( existePtr != NULL ) {
+      i = strcmp (nombre, existePtr->nombreVariable);
+       //printf("%s-%s",nombre,existePtr->nombreVariable);
+      if (i == 0){
+        direccion = existePtr->direccion;
+        //printf ("%d\n",direccion);
+      }
+      existePtr = existePtr->nextPtr;   
+    } // end while
+    return direccion;
+}
 void cuadruplosComparaciones(int tipoComp){
   int operacion;
   int operando1;
@@ -799,53 +800,74 @@ void cuadruplosComparaciones(int tipoComp){
   insertCuadruplos( &startCuadruplos, operacion, operando1, operando2, resultado);
   esComparacion=0;
 }
-void EscrituraWrite(char *nombre){
-  int direccion;
-  direccion = direccionVariable(nombre);
-  insertCuadruplos(&startCuadruplos,30,direccion,0,0);
-}
 void unoEstIf(){
   //21 gotof
-  int guarda;
   insertCuadruplos(&startCuadruplos, 21,PilaO->data,0,0);
-  guarda = PilaO->data;
   pop(&PilaO);
-  pop(&PilaO);
-  push(&PilaO,guarda);
   push (&Saltos,contSaltos-1);
 }
 void dosEstIf(){
-  int diferenciaCuadruplos;
-  CuadruplosPtr memoriaCuadruplo;
-  memoriaCuadruplo = startCuadruplos->nextPtr;
-  insertCuadruplos(&startCuadruplos,20,0,0,0);  
-  diferenciaCuadruplos = contSaltos-1-Saltos->data;
-  memoriaCuadruplo=startCuadruplos->nextPtr;
-
+  insertCuadruplos(&startCuadruplos,20,0,0,0); //genera goto
+  int diferenciaCuadruplos; // diferencia de cuadruplos para ubicacion
+  CuadruplosPtr memoriaCuadruplo; //apunador al cuadruplo para insertar #de cuadruplo en f
+  memoriaCuadruplo = startCuadruplos;// indica donde esta el apuntador del cuadruplo para retroceder la diferenciad de cuadruplos
+  diferenciaCuadruplos = contSaltos-Saltos->data;
+  memoriaCuadruplo=startCuadruplos;
   for (int i=0;i<diferenciaCuadruplos-1;i++){
     memoriaCuadruplo=memoriaCuadruplo->nextPtr;
   }
   memoriaCuadruplo->dirResultado = contSaltos-1;
-  pop(&Saltos);
-
+  pop(&Saltos);// sacar falso de PSaltos
   push (&Saltos,contSaltos-1);
 }
 void tresEstIf(){
   int diferenciaCuadruplos;
   CuadruplosPtr memoriaCuadruplo;
-  memoriaCuadruplo = startCuadruplos->nextPtr;
-  diferenciaCuadruplos=contSaltos-1-Saltos->data;
-  printf("%d----\n",diferenciaCuadruplos);
-  memoriaCuadruplo = startCuadruplos->nextPtr;
+  memoriaCuadruplo = startCuadruplos;
+  diferenciaCuadruplos=contSaltos-Saltos->data;
+  memoriaCuadruplo = startCuadruplos;
   for (int i=0;i<diferenciaCuadruplos-1;i++){
     memoriaCuadruplo=memoriaCuadruplo->nextPtr;
   }
-
   memoriaCuadruplo->dirResultado = contSaltos-1;
-
-  printf("%d????%d\n",Saltos->data,contSaltos-1 );
-  pop(&Saltos);
+  pop(&Saltos); 
 }
+
+void EscrituraWrite(char *nombre){
+  int direccion;
+  direccion = direccionVariable(nombre);
+  insertCuadruplos(&startCuadruplos,30,direccion,0,0);
+}
+void unoEstWhile(){
+  push(&Saltos, contSaltos);
+}
+void dosEstWhile(){
+  insertCuadruplos(&startCuadruplos, 21,PilaO->data,0,0);
+  pop(&PilaO);
+  push (&Saltos,contSaltos-1);
+}
+void tresEstWhile(){
+  int retorno;
+  int falso;
+  falso=Saltos->data;
+  pop(&Saltos);
+  retorno=Saltos->data;
+  insertCuadruplos(&startCuadruplos, 20,0,0,retorno);
+
+  int diferenciaCuadruplos;
+  CuadruplosPtr memoriaCuadruplo;
+  memoriaCuadruplo = startCuadruplos;
+  diferenciaCuadruplos=contSaltos-Saltos->data-1;
+  memoriaCuadruplo = startCuadruplos;
+  for (int i=0;i<diferenciaCuadruplos-1;i++){
+    memoriaCuadruplo=memoriaCuadruplo->nextPtr;
+  }
+  memoriaCuadruplo->dirResultado = contSaltos-1;
+  pop(&Saltos);
+
+
+}
+
 char* itoa(int val, int base){
   
   static char buf[32] = {0};
@@ -903,7 +925,6 @@ int main(int argc,char **argv){
   printTables( startProList );
   printCuadruplos ( startCuadruplos );
   printTabCons( startTabCons);
-  printf("%d\n",contSaltos );
   return 0;
   
 }
